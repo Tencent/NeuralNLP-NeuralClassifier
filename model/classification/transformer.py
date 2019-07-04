@@ -113,7 +113,6 @@ class Transformer(Classifier):
             for enc_layer in self.layer_stack:
                 h, s = enc_layer(h, embedding, s,
                                  non_pad_mask=non_pad_mask,
-                                 # todo(liqunliu): add attention mask
                                  slf_attn_mask=None)
             h_max, _ = torch.max(h, 1)
             enc_output = h_max + s
