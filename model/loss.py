@@ -132,6 +132,9 @@ class ClassificationLoss(torch.nn.Module):
                                                                   hierar_relations,
                                                                   device)
         else:
+            if not is_multi:
+                device = logits.device
+                target = torch.eye(self.label_size)[target].to(device)
             return self.criterion(logits, target)
 
     def cal_recursive_regularize(self, paras, hierar_relations, device="cpu"):
