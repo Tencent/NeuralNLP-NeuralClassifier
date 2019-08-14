@@ -66,7 +66,7 @@ class DatasetBase(torch.utils.data.dataset.Dataset):
         self._init_dict()
         self.sample_index = []
         self.sample_size = 0
-        self.mode = mode
+        self.model_mode = mode
 
         self.files = json_files
         for i, json_file in enumerate(json_files):

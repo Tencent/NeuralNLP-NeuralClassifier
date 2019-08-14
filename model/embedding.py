@@ -21,7 +21,7 @@ from model.model_util import FAN_MODE
 from model.model_util import InitType
 from model.model_util import init_tensor
 from util import Logger
-from util import Type
+from util import Type, ModeType
 
 
 class EmbeddingType(Type):
@@ -33,7 +33,7 @@ class EmbeddingType(Type):
     """
     EMBEDDING = 'embedding'
     REGION_EMBEDDING = 'region_embedding'
-
+    
     @classmethod
     def str(cls):
         return ",".join([cls.EMBEDDING, cls.REGION_EMBEDDING])
@@ -53,7 +53,7 @@ class EmbeddingProcessType(Type):
     FLAT = 'flat'
     MEAN = 'mean'
     SUM = 'sum'
-
+    
     @classmethod
     def str(cls):
         return ",".join([cls.FLAT, cls.MEAN, cls.SUM])
@@ -64,7 +64,8 @@ class Embedding(torch.nn.Module):
                  pretrained_embedding_file=None, mode=EmbeddingProcessType.FLAT,
                  dropout=0, init_type=InitType.XAVIER_UNIFORM, low=0, high=1,
                  mean=0, std=1, activation_type=ActivationType.NONE,
-                 fan_mode=FAN_MODE.FAN_IN, negative_slope=0):
+                 fan_mode=FAN_MODE.FAN_IN, negative_slope=0,
+                 model_mode=ModeType.TRAIN):
         super(Embedding, self).__init__()
         self.logger = Logger(config)
         self.dropout = torch.nn.Dropout(p=dropout)
@@ -80,7 +81,8 @@ class Embedding(torch.nn.Module):
             init_type=init_type, low=low, high=high, mean=mean, std=std,
             activation_type=activation_type, fan_mode=fan_mode,
             negative_slope=negative_slope)
-        if pretrained_embedding_file is not None and \
+        if model_mode == ModeType.TRAIN and \
+                pretrained_embedding_file is not None and \
                 pretrained_embedding_file != "":
             self.load_pretrained_embedding(
                 embedding_lookup_table, dict_map, embedding_dim, name,
@@ -130,7 +132,7 @@ class RegionEmbeddingType(Type):
     """
     WC = 'word_context'
     CW = 'context_word'
-
+    
     @classmethod
     def str(cls):
         return ",".join([cls.WC, cls.CW])
@@ -144,7 +146,7 @@ class RegionEmbeddingLayer(torch.nn.Module):
     def __init__(self, dict_map, embedding_dim, region_size, name, config,
                  padding=None, pretrained_embedding_file=None, dropout=0,
                  init_type=InitType.XAVIER_UNIFORM, low=0, high=1, mean=0,
-                 std=1, fan_mode=FAN_MODE.FAN_IN,
+                 std=1, fan_mode=FAN_MODE.FAN_IN, model_mode=ModeType.TRAIN,
                  region_embedding_type=RegionEmbeddingType.WC):
         super(RegionEmbeddingLayer, self).__init__()
         self.region_embedding_type = region_embedding_type
@@ -157,7 +159,7 @@ class RegionEmbeddingLayer(torch.nn.Module):
             padding_idx=padding,
             pretrained_embedding_file=pretrained_embedding_file,
             dropout=dropout, init_type=init_type, low=low, high=high, mean=mean,
-            std=std, fan_mode=fan_mode)
+            std=std, fan_mode=fan_mode, model_mode=model_mode)
         self.context_embedding = Embedding(
             dict_map, embedding_dim * region_size, "RegionContext" + name,
             config=config, padding_idx=padding, dropout=dropout,
@@ -208,7 +210,6 @@ class RegionEmbeddingLayer(torch.nn.Module):
 
         return region_embedding
 
-
 class PositionEmbedding(torch.nn.Module):
     ''' Reference: attention is all you need '''
 
@@ -226,6 +227,7 @@ class PositionEmbedding(torch.nn.Module):
 
     @staticmethod
     def get_sinusoid_encoding_table(n_position, d_hid, padding_idx=None):
+
         def cal_angle(position, hid_idx):
             return position / np.power(10000, 2 * (hid_idx // 2) / d_hid)
 

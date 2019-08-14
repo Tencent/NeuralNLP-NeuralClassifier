@@ -58,6 +58,16 @@ The training info will be outputted in standard output and log.logger\_file.
 
 The evaluation info will be outputed in eval.dir.
 
+### Prediction
+    python predict.py conf/train.json data/predict.json 
+
+* predict.json should be of json format, while each instance has a dummy label like "其他" or any other label in label map.
+* eval.model\_dir is the model to predict.
+* eval.top\_k is the number of labels to output.
+* eval.threshold is the probability threshold.
+
+The predict info will be outputed in predict.txt.
+
 ## Input Data Format
 
     JSON example:

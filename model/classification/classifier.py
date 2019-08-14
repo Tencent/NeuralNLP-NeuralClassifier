@@ -42,7 +42,8 @@ class Classifier(torch.nn.Module):
                           high=self.config.embedding.uniform_bound,
                           std=self.config.embedding.random_stddev,
                           fan_mode=self.config.embedding.fan_mode,
-                          activation_type=ActivationType.NONE)
+                          activation_type=ActivationType.NONE,
+                          model_mode=dataset.model_mode)
             self.char_embedding = \
                 Embedding(dataset.char_map, config.embedding.dimension,
                           cDataset.DOC_CHAR, config, dataset.VOCAB_PADDING,
@@ -53,7 +54,8 @@ class Classifier(torch.nn.Module):
                           high=self.config.embedding.uniform_bound,
                           std=self.config.embedding.random_stddev,
                           fan_mode=self.config.embedding.fan_mode,
-                          activation_type=ActivationType.NONE)
+                          activation_type=ActivationType.NONE,
+                          model_mode=dataset.model_mode)
         elif config.embedding.type == EmbeddingType.REGION_EMBEDDING:
             self.token_embedding = RegionEmbeddingLayer(
                 dataset.token_map, config.embedding.dimension,
@@ -67,6 +69,7 @@ class Classifier(torch.nn.Module):
                 high=self.config.embedding.uniform_bound,
                 std=self.config.embedding.random_stddev,
                 fan_mode=self.config.embedding.fan_mode,
+                model_mode=dataset.model_mode,
                 region_embedding_type=config.embedding.region_embedding_type)
 
             self.char_embedding = RegionEmbeddingLayer(
@@ -79,6 +82,7 @@ class Classifier(torch.nn.Module):
                 high=self.config.embedding.uniform_bound,
                 std=self.config.embedding.random_stddev,
                 fan_mode=self.config.embedding.fan_mode,
+                model_mode=dataset.model_mode,
                 region_embedding_type=config.embedding.region_embedding_type)
         else:
             raise TypeError(

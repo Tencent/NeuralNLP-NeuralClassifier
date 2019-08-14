@@ -160,7 +160,7 @@ class ClassificationDataset(DatasetBase):
                               self.token_ngram_map,
                               self.config.feature.max_char_len,
                               self.config.feature.max_char_len_per_token)
-        return {self.DOC_LABEL: self._label_to_id(doc_labels, self.label_map),
+        return {self.DOC_LABEL: self._label_to_id(doc_labels, self.label_map) if self.model_mode != ModeType.PREDICT else [0],
                 self.DOC_TOKEN: token_ids, self.DOC_CHAR: char_ids,
                 self.DOC_CHAR_IN_TOKEN: char_in_token_ids,
                 self.DOC_TOKEN_NGRAM: token_ngram_ids,
