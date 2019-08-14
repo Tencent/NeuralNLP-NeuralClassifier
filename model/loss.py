@@ -134,10 +134,10 @@ class ClassificationLoss(torch.nn.Module):
         else:
             if is_multi:
                 assert self.loss_type in [LossType.BCE_WITH_LOGITS,
-                                        LossType.SIGMOID_FOCAL_CROSS_ENTROPY]
+                                          LossType.SIGMOID_FOCAL_CROSS_ENTROPY]
             else:
                 if self.loss_type not in [LossType.SOFTMAX_CROSS_ENTROPY,
-                                          LossType.SOFTMAX_FOCAL_CROSS_ENTROPY]
+                                          LossType.SOFTMAX_FOCAL_CROSS_ENTROPY]:
                     target = torch.eye(self.label_size)[target].to(device)
             return self.criterion(logits, target)
 
