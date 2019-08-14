@@ -120,10 +120,10 @@ class ClassificationLoss(torch.nn.Module):
                 use_hierar=False,
                 is_multi=False,
                 *argvs):
+        device = logits.device
         if use_hierar:
             assert self.loss_type in [LossType.BCE_WITH_LOGITS,
                                       LossType.SIGMOID_FOCAL_CROSS_ENTROPY]
-            device = logits.device
             if not is_multi:
                 target = torch.eye(self.label_size)[target].to(device)
             hierar_penalty, hierar_paras, hierar_relations = argvs[0:3]
@@ -132,9 +132,13 @@ class ClassificationLoss(torch.nn.Module):
                                                                   hierar_relations,
                                                                   device)
         else:
-            if not is_multi:
-                device = logits.device
-                target = torch.eye(self.label_size)[target].to(device)
+            if is_multi:
+                assert self.loss_type in [LossType.BCE_WITH_LOGITS,
+                                        LossType.SIGMOID_FOCAL_CROSS_ENTROPY]
+            else:
+                if self.loss_type not in [LossType.SOFTMAX_CROSS_ENTROPY,
+                                          LossType.SOFTMAX_FOCAL_CROSS_ENTROPY]
+                    target = torch.eye(self.label_size)[target].to(device)
             return self.criterion(logits, target)
 
     def cal_recursive_regularize(self, paras, hierar_relations, device="cpu"):

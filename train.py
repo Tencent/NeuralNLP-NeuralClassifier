@@ -130,7 +130,9 @@ class ClassificationTrainer(object):
             else:  # flat classification
                 loss = self.loss_fn(
                     logits,
-                    batch[ClassificationDataset.DOC_LABEL].to(self.conf.device))
+                    batch[ClassificationDataset.DOC_LABEL].to(self.conf.device),
+                    False,
+                    is_multi)
             if mode == ModeType.TRAIN:
                 optimizer.zero_grad()
                 loss.backward()
