@@ -44,6 +44,7 @@ class TextRNN(Classifier):
 
     def __init__(self, dataset, config):
         super(TextRNN, self).__init__(dataset, config)
+        self.doc_embedding_type = config.TextRNN.doc_embedding_type
         self.rnn = RNN(
             config.embedding.dimension, config.TextRNN.hidden_dimension,
             num_layers=config.TextRNN.num_layers, batch_first=True,
@@ -62,6 +63,8 @@ class TextRNN(Classifier):
         params = super(TextRNN, self).get_parameter_optimizer_dict()
         params.append({'params': self.rnn.parameters()})
         params.append({'params': self.linear.parameters()})
+        if self.doc_embedding_type == DocEmbeddingType.ATTENTION:
+            params.append({'params': self.sum_attention.parameters()})
         return params
 
     def update_lr(self, optimizer, epoch):
@@ -83,16 +86,15 @@ class TextRNN(Classifier):
             length = batch[cDataset.DOC_CHAR_LEN].to(self.config.device)
         output, last_hidden = self.rnn(embedding, length)
 
-        doc_embedding_type = self.config.TextRNN.doc_embedding_type
-        if doc_embedding_type == DocEmbeddingType.AVG:
+        if self.doc_embedding_type == DocEmbeddingType.AVG:
             doc_embedding = torch.sum(output, 1) / length.unsqueeze(1)
-        elif doc_embedding_type == DocEmbeddingType.ATTENTION:
+        elif self.doc_embedding_type == DocEmbeddingType.ATTENTION:
             doc_embedding = self.sum_attention(output)
-        elif doc_embedding_type == DocEmbeddingType.LAST_HIDDEN:
+        elif self.doc_embedding_type == DocEmbeddingType.LAST_HIDDEN:
             doc_embedding = last_hidden
         else:
             raise TypeError(
                 "Unsupported rnn init type: %s. Supported rnn type is: %s" % (
-                    doc_embedding_type, DocEmbeddingType.str()))
+                    self.doc_embedding_type, DocEmbeddingType.str()))
 
         return self.dropout(self.linear(doc_embedding))
