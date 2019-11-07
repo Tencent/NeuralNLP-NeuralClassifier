@@ -3,7 +3,7 @@ Configuration of NeuralClassifier uses JSON.
 ## Common
 
 * **task\_info**
-    * **label_type**:  Candidates: "single-label", "multi-label".
+    * **label_type**:  Candidates: "single_label", "multi_label".
     * **hierarchical**: Boolean. Indicates whether it is a hierarchical classification.
     * **hierar_taxonomy**: A text file describes taxonomy. 
     * **hierar_penalty**: Float.

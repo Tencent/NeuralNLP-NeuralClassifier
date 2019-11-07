@@ -78,7 +78,7 @@ class TextVDCNN(Classifier):
             params.append({'params': self.batch_norms[i].parameters()})
         params.append({'params': self.linear1.parameters()})
         params.append({'params': self.linear2.parameters()})
-        params.append({'params': self.linear3.parameters()})
+        params.append({'params': self.linear.parameters()})
         return params
 
     def update_lr(self, optimizer, epoch):
