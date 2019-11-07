@@ -194,7 +194,7 @@ def train(conf):
         else "ClassificationCollator"
     train_data_loader, validate_data_loader, test_data_loader = \
         get_data_loader(dataset_name, collate_name, conf)
-    empty_dataset = globals()[dataset_name](conf, [])
+    empty_dataset = globals()[dataset_name](conf, [], mode="train")
     model = get_classification_model(model_name, empty_dataset, conf)
     loss_fn = globals()["ClassificationLoss"](
         label_size=len(empty_dataset.label_map), loss_type=conf.train.loss_type)
