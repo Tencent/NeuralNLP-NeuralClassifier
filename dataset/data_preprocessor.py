@@ -20,6 +20,10 @@ import csv
 import json
 import re
 import sys
+import pandas as pd
+import random
+from tokenizer import get_tokenizer
+from tqdm import tqdm
 
 
 def clean_str(string):
@@ -56,26 +60,47 @@ def convert_multi_slots_to_single_slots(slots):
         return ' '.join(slots)
 
 
-def preprocess(csv_file, json_file):
-    with open(json_file, "w") as fout:
-        with open(csv_file, 'rb') as fin:
-            lines = csv.reader(fin)
-            for items in lines:
-                text_data = convert_multi_slots_to_single_slots(items[1:])
-                text_data = clean_str(text_data)
-                sample = dict()
-                sample['doc_label'] = [items[0]]
-                sample['doc_token'] = text_data.split(" ")
-                sample['doc_keyword'] = []
-                sample['doc_topic'] = []
-                json_str = json.dumps(sample, ensure_ascii=False)
-                fout.write(json_str)
+def preprocess(sample:dict, tokenizer:None):
+    sample['doc_label'] = sample['doc_label']
+    if not tokenizer:
+        sample['doc_token'] = text_data.split(" ")
+    else:
+        sample['doc_token'] = tokenizer.tokenize(sample['doc_text'])['doc_token']
+    sample['doc_keyword'] = []
+    sample['doc_topic'] = []
+    return sample
+
+
+
+def read_csv(excel_file:str):
+    name = excel_file.split('.')[0]
+    table = pd.read_excel(excel_file)
+    file_train = open(f"{name}_train.json", 'w')
+    file_test  = open(f"{name}_test.json", 'w')
+    file_dev   = open(f"{name}_dev.json", 'w')
+    tokenizer = get_tokenizer()
+    
+    dataset = []
+    for i in tqdm(range(len(table))):
+        items = table.iloc[i].to_dict()
+        if items['情感'] in ['有害', '关注']:
+            continue
+
+        items = {
+                'doc_text': items['信息标题'],
+                'doc_label': [items['情感'].strip()]
+                }
+        items = preprocess(items, tokenizer)
+        dataset.append(items)
+        json_str = json.dumps(items, ensure_ascii=False)
+        if random.random() < 0.1:
+            file_test.write(json_str+'\n')
+        elif random.random() < 0.2:
+            file_dev.write(json_str+'\n')
+        else:
+            file_train.write(json_str+'\n')
 
 
 if __name__ == '__main__':
-    train_csv = sys.argv[1]
-    train_json = sys.argv[2]
-    test_csv = sys.argv[3]
-    test_json = sys.argv[4]
-    preprocess(train_csv, train_json)
-    preprocess(test_csv, test_json)
+    csv_file = sys.argv[1]
+    read_csv(csv_file)
