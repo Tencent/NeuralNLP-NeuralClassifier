@@ -1,0 +1,157 @@
+{
+  "task_info":{
+    "label_type": "single_label",
+    "hierarchical": false,
+    "hierar_taxonomy": "data/sentiment_classification.taxonomy",
+    "hierar_penalty": 0.000001
+  },
+  "detail_classes":["负面", "中性", "正面"],
+  "device": "cuda",
+  "model_name": "FastText",
+  "checkpoint_dir": "checkpoint_dir_sentiment_classification",
+  "model_dir": "trained_model_sentiment_classification",
+  "data": {
+    "train_json_files": [
+      "data/sentiment_classification_train_4w.json"
+    ],
+    "validate_json_files": [
+      "data/sentiment_classification_dev.json"
+    ],
+    "test_json_files": [
+      "data/sentiment_classification_test.json"
+    ],
+    "generate_dict_using_json_files": true,
+    "generate_dict_using_all_json_files": true,
+    "generate_dict_using_pretrained_embedding": false,
+    "dict_dir": "dict_sentiment_classification",
+    "num_worker": 4
+  },
+  "feature": {
+    "feature_names": [
+      "token"
+    ],
+    "min_token_count": 2,
+    "min_char_count": 2,
+    "token_ngram": 0,
+    "min_token_ngram_count": 0,
+    "min_keyword_count": 0,
+    "min_topic_count": 2,
+    "max_token_dict_size": 1000000,
+    "max_char_dict_size": 150000,
+    "max_token_ngram_dict_size": 10000000,
+    "max_keyword_dict_size": 100,
+    "max_topic_dict_size": 100,
+    "max_token_len": 256,
+    "max_char_len": 1024,
+    "max_char_len_per_token": 4,
+    "token_pretrained_file": "",
+    "keyword_pretrained_file": ""
+  },
+  "train": {
+    "batch_size": 64,
+    "start_epoch": 1,
+    "num_epochs": 10,
+    "num_epochs_static_embedding": 0,
+    "decay_steps": 1000,
+    "decay_rate": 1.0,
+    "clip_gradients": 100.0,
+    "l2_lambda": 0.0,
+    "loss_type": "BCEWithLogitsLoss",
+    "sampler": "fixed",
+    "num_sampled": 5,
+    "visible_device_list": "0",
+    "hidden_layer_dropout": 0.5
+  },
+  "embedding": {
+    "type": "embedding",
+    "dimension": 64,
+    "region_embedding_type": "context_word",
+    "region_size": 5,
+    "initializer": "uniform",
+    "fan_mode": "FAN_IN",
+    "uniform_bound": 0.25,
+    "random_stddev": 0.01,
+    "dropout": 0.0
+  },
+  "optimizer": {
+    "optimizer_type": "Adam",
+    "learning_rate": 0.008,
+    "adadelta_decay_rate": 0.95,
+    "adadelta_epsilon": 1e-08
+  },
+  "TextCNN": {
+    "kernel_sizes": [
+      2,
+      3,
+      4
+    ],
+    "num_kernels": 100,
+    "top_k_max_pooling": 1
+  },
+  "TextRNN": {
+    "hidden_dimension": 64,
+    "rnn_type": "GRU",
+    "num_layers": 1,
+    "doc_embedding_type": "LastHidden",
+    "attention_dimension": 16,
+    "bidirectional": true
+  },
+  "DRNN": {
+    "hidden_dimension": 5,
+    "window_size": 3,
+    "rnn_type": "GRU",
+    "bidirectional": true,
+    "cell_hidden_dropout": 0.1
+  },
+  "eval": {
+    "text_file": "data/sentiment_classification_test.json",
+    "threshold": 0.5,
+    "dir": "eval_dir",
+    "batch_size": 1024,
+    "is_flat": true,
+    "top_k": 100,
+    "model_dir": "checkpoint_dir_sentiment_classification/TextCNN_best"
+  },
+  "TextVDCNN": {
+    "vdcnn_depth": 9,
+    "top_k_max_pooling": 8
+  },
+  "DPCNN": {
+    "kernel_size": 3,
+    "pooling_stride": 2,
+    "num_kernels": 16,
+    "blocks": 2
+  },
+  "TextRCNN": {
+    "kernel_sizes": [
+        2,
+        3,
+        4
+    ],
+    "num_kernels": 100,
+    "top_k_max_pooling": 1,
+    "hidden_dimension":64,
+    "rnn_type": "GRU",
+    "num_layers": 1,
+    "bidirectional": true
+  },
+  "Transformer": {
+    "d_inner": 128,
+    "d_k": 32,
+    "d_v": 32,
+    "n_head": 4,
+    "n_layers": 1,
+    "dropout": 0.1,
+    "use_star": true
+  },
+  "AttentiveConvNet": {
+    "attention_type": "bilinear",
+    "margin_size": 3,
+    "type": "advanced",
+    "hidden_size": 64
+  },
+  "log": {
+    "logger_file": "log_test_sentiment_classification_hierar",
+    "log_level": "warn"
+  }
+}

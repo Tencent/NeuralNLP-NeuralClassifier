@@ -156,8 +156,8 @@ class ClassificationTrainer(object):
             # precision_list[0] save metrics of flat classification
             # precision_list[1:] save metrices of hierarchical classification
             self.logger.warn(
-                "%s performance at epoch %d is precision: %f, "
-                "recall: %f, fscore: %f, macro-fscore: %f, right: %d, predict: %d, standard: %d.\n"
+                "[ %s ] performance at epoch %d is precision: %.3f, "
+                "recall: %.3f, fscore: %.3f, macro-fscore: %.3f, right: %d, predict: %d, standard: %d.\n"
                 "Loss is: %f." % (
                     stage, epoch, precision_list[0][cEvaluator.MICRO_AVERAGE],
                     recall_list[0][cEvaluator.MICRO_AVERAGE],
@@ -165,8 +165,19 @@ class ClassificationTrainer(object):
                     fscore_list[0][cEvaluator.MACRO_AVERAGE],
                     right_list[0][cEvaluator.MICRO_AVERAGE],
                     predict_list[0][cEvaluator.MICRO_AVERAGE],
-                        standard_list[0][cEvaluator.MICRO_AVERAGE], total_loss))
-            return fscore_list[0][cEvaluator.MICRO_AVERAGE]
+                    standard_list[0][cEvaluator.MICRO_AVERAGE], total_loss))
+            for label_name in self.conf['detail_classes']:
+                self.logger.warn(
+                    " | [ %s ] label precision: %.3f, "
+                    "recall: %.3f, fscore: %.3f, right: %d, predict: %d, standard: %d."
+                    % (
+                        label_name, precision_list[0][label_name],
+                        recall_list[0][label_name],
+                        fscore_list[0][label_name],
+                        right_list[0][label_name],
+                        predict_list[0][label_name],
+                        standard_list[0][label_name]))
+            return fscore_list[0][label_name]
 
 
 def load_checkpoint(file_name, conf, model, optimizer):

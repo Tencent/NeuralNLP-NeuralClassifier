@@ -93,9 +93,11 @@ def read_csv(excel_file:str):
         items = preprocess(items, tokenizer)
         dataset.append(items)
         json_str = json.dumps(items, ensure_ascii=False)
-        if random.random() < 0.1:
+
+        p = random.uniform(0, 1)
+        if p < 0.1:
             file_test.write(json_str+'\n')
-        elif random.random() < 0.2:
+        elif p < 0.2:
             file_dev.write(json_str+'\n')
         else:
             file_train.write(json_str+'\n')
