@@ -46,54 +46,6 @@ class Inferer():
                 pred.append("负面")
         return pred
 
-    def threshold(self,dev_df:pd.DataFrame,recall_require=0.99,precision_require=0.99, recall_col="负面",precision_col='正面',text_col="信息标题",label_col = '情感'):
-        print(dev_df[text_col])    
-        emotions = self.infer(dev_df[text_col].tolist())
-        print(emotions)
-        time.sleep(20)
-        emotions_list = [[x['中性'],x['正面'],x['负面']] for x in emotions]
-        dev_df["中性"] = None
-        dev_df['正面'] = None
-        dev_df['负面'] = None
-        dev_df[['中性','正面','负面']] = emotions_list
-
-
-
-        pos_thresh = 0.73
-        neg_thresh = 0.1
-        best_pos_thresh = -1
-        best_neg_thresh = -1
-        best_precision = -1
-        best_recall = -1
-        collections = []
-        steps = 100
-        step_size = 0.01/steps
-
-        for i in range(steps):
-            pos_thresh+=step_size
-            neg_thresh = 0.1
-            for j in range(steps+1):
-                print(pos_thresh)
-                print(neg_thresh)
-                neg_thresh -=step_size
-                pred = self.infer_class(emotions,pos_thresh,neg_thresh)
-                report = self.eval_pred(pred,dev_df[label_col])
-                if report[precision_col]['precision']>best_precision and report[precision_col]['precision'] > precision_require and report[recall_col]["recall"] >best_recall and report[recall_col]['recall'] > recall_require:
-                    best_precision = report[precision_col]['precision']
-                    best_pos_thresh = pos_thresh
-                    best_recall = report[recall_col]['recall']
-                    best_neg_thresh = neg_thresh
-                    collections.append({"best_pos_thresh":pos_thresh,"best_neg_thresh":neg_thresh,"pos_precision":best_precision,"neg_recall":best_recall})
-            if report[precision_col]['precision']<0.5:
-                break
-        return collections
-
-
-    def eval_pred(self,pred,true):
-        report = classification_report(y_true = true, y_pred = pred,output_dict = True)
-        print(report)
-        print(
-        return report
 if __name__=="__main__":
 
     '''
@@ -109,6 +61,4 @@ if __name__=="__main__":
     
     config = Config(config_file=sys.argv[1])
     inferer = Inferer(config)
-
-    collections= inferer.threshold(dev_df)
-    print(collections)
+   

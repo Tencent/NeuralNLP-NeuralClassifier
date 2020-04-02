@@ -85,6 +85,7 @@ class Predictor(object):
             return np.array(probs)
 
 if __name__ == "__main__":
+    import ipdb;ipdb.set_trace()
     config = Config(config_file=sys.argv[1])
     predictor = Predictor(config)
     batch_size = config.eval.batch_size
