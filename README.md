@@ -125,7 +125,7 @@ The predict info will be outputed in predict.txt.
 </table>
 
 ### 3. Hierarchical vs Flat
-
+RCV1 dataset
 <table>
 <tr><th row_span='2'>Text Encoders<th colspan='2'>Hierarchical<th colspan='2'>Flat
 <tr><td><th>Micro-F1<th>Macro-F1<th>Micro-F1<th>Macro-F1
