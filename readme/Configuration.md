@@ -54,7 +54,7 @@ Configuration of NeuralClassifier uses JSON.
 * **decay\_rate**: Rate of decay for learning rate.
 * **clip\_gradients**: Clip absolute value gradient bigger than threshold.
 * **l2\_lambda**: l2 regularization lambda value.
-* **loss\_type**: Candidates: "SoftmaxCrossEntropy", "SoftmaxFocalCrossEntropy", "SigmodFocalCrossEntropy", "BCEWithLogitsLoss".
+* **loss\_type**: Candidates: "SoftmaxCrossEntropy", "SoftmaxFocalCrossEntropy", "SigmoidFocalCrossEntropy", "BCEWithLogitsLoss".
 * **sampler**: If loss type is NCE, sampler is needed. Candidate: "fixed", "log", "learned", "uniform".
 * **num\_sampled**: If loss type is NCE, need to sample negative labels.
 * **hidden\_layer\_dropout**: dropout of hidden layer.
