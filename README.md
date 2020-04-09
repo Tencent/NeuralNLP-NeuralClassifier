@@ -124,6 +124,8 @@ The predict info will be outputed in predict.txt.
 
 </table>
 
+* performance got with [300d pretrained glove embedding](https://nlp.stanford.edu/projects/glove/)
+
 ### 3. Hierarchical vs Flat
 
 <table>
