@@ -27,12 +27,12 @@ from model.attention import MultiHeadAttention
 
 
 class PositionwiseFeedForward(nn.Module):
-    ''' A two-feed-forward-layer module '''
+    """A two-feed-forward-layer module """
 
     def __init__(self, d_in, d_hid, dropout=0.1):
         super(PositionwiseFeedForward, self).__init__()
-        self.w_1 = nn.Conv1d(d_in, d_hid, 1) # position-wise
-        self.w_2 = nn.Conv1d(d_hid, d_in, 1) # position-wise
+        self.w_1 = nn.Conv1d(d_in, d_hid, 1)  # position-wise
+        self.w_2 = nn.Conv1d(d_hid, d_in, 1)  # position-wise
         self.layer_norm = nn.LayerNorm(d_in)
         self.dropout = nn.Dropout(dropout)
 
@@ -47,7 +47,7 @@ class PositionwiseFeedForward(nn.Module):
 
 
 class EncoderLayer(nn.Module):
-    ''' Compose with two layers '''
+    """Compose with two layers """
 
     def __init__(self, d_model, d_inner, n_head, d_k, d_v, dropout=0.1):
         super(EncoderLayer, self).__init__()
@@ -67,7 +67,7 @@ class EncoderLayer(nn.Module):
 
 
 class StarEncoderLayer(nn.Module):
-    ''' Star-Transformer: https://arxiv.org/pdf/1902.09113v2.pdf '''
+    """ Star-Transformer: https://arxiv.org/pdf/1902.09113v2.pdf """
 
     def __init__(self, d_model, n_head, d_k, d_v, dropout=0.1):
         super(StarEncoderLayer, self).__init__()
@@ -79,18 +79,18 @@ class StarEncoderLayer(nn.Module):
     def forward(self, h, e, s, non_pad_mask=None, slf_attn_mask=None):
         # satellite node
         batch_size, seq_len, d_model = h.size()
-        h_extand = torch.zeros(batch_size, seq_len+2, d_model, dtype=torch.float, device=h.device)
-        h_extand[:, 1:seq_len+1, :] = h  # head and tail padding(not cycle)
+        h_extand = torch.zeros(batch_size, seq_len + 2, d_model, dtype=torch.float, device=h.device)
+        h_extand[:, 1:seq_len + 1, :] = h  # head and tail padding(not cycle)
         s = s.reshape([batch_size, 1, d_model])
         s_expand = s.expand([batch_size, seq_len, d_model])
         context = torch.cat((h_extand[:, 0:seq_len, :],
-                             h_extand[:, 1:seq_len+1, :],
-                             h_extand[:, 2:seq_len+2, :],
+                             h_extand[:, 1:seq_len + 1, :],
+                             h_extand[:, 2:seq_len + 2, :],
                              e,
                              s_expand),
                             2)
-        context = context.reshape([batch_size*seq_len, 5, d_model])
-        h = h.reshape([batch_size*seq_len, 1, d_model])
+        context = context.reshape([batch_size * seq_len, 5, d_model])
+        h = h.reshape([batch_size * seq_len, 1, d_model])
 
         h, _ = self.slf_attn_satellite(
             h, context, context, mask=slf_attn_mask)

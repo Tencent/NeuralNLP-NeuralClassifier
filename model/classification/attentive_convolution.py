@@ -28,7 +28,7 @@ class AttentiveConvNetType(Type):
 
     @classmethod
     def str(cls):
-        return ",".join(cls.LIGHT, cls.ADVANCED)
+        return ",".join([cls.LIGHT, cls.ADVANCED])
 
 
 class AttentionType(Type):
@@ -38,7 +38,7 @@ class AttentionType(Type):
 
     @classmethod
     def str(cls):
-        return ",".join(cls.DOT, cls.BILINEAR, cls.ADDITIVE_PROJECTION)
+        return ",".join([cls.DOT, cls.BILINEAR, cls.ADDITIVE_PROJECTION])
 
 
 class AttentiveConvNet(Classifier):

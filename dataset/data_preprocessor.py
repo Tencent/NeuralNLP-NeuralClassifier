@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding:utf-8
+# coding:utf-8
 """
 Tencent is pleased to support the open source community by making NeuralClassifier available.
 Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
@@ -11,7 +11,6 @@ is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND
 or implied. See the License for thespecific language governing permissions and limitations under
 the License.
 """
-
 
 # Same as "A New Method of Region Embedding for Text Classification"
 # https://github.com/text-representation/local-context-unit/blob/master/bin/prepare.py

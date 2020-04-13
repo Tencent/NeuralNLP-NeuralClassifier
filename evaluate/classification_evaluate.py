@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding:utf-8
+# coding:utf-8
 """
 Tencent is pleased to support the open source community by making NeuralClassifier available.
 Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
@@ -72,6 +72,7 @@ class ClassificationEvaluator(object):
                     cnt += 1
                     break
         return cnt == len(label_name)
+
     def calculate_level_performance(
             self, id_to_label_map, right_count_category, predict_count_category,
             standard_count_category, other_text='其他',
@@ -116,10 +117,10 @@ class ClassificationEvaluator(object):
             if label_name in other_label:
                 continue
             precision_dict[label_name], recall_dict[label_name], \
-                fscore_dict[label_name] = self._calculate_prf(
-                    right_count_category[label_name],
-                    predict_count_category[label_name],
-                    standard_count_category[label_name])
+            fscore_dict[label_name] = self._calculate_prf(
+                right_count_category[label_name],
+                predict_count_category[label_name],
+                standard_count_category[label_name])
             right_total += right_count_category[label_name]
             predict_total += predict_count_category[label_name]
             standard_total += standard_count_category[label_name]
@@ -263,12 +264,14 @@ class ClassificationEvaluator(object):
                 else:
                     predict_label_ids = []
                     predict_label_idx = np.argsort(-prob_np)
+                    assert top_k < len(prob_np), "top_k must less length of labels."
                     for j in range(0, top_k):
-                        if prob_np[predict_label_idx[j]] > threshold:
+                        pj = predict_label_idx[j]
+                        if prob_np[pj] > threshold:
                             predict_label_ids.append(predict_label_idx[j])
 
                 predict_label_name = [id_to_label_maps[0][predict_label_id] \
-                    for predict_label_id in predict_label_ids]
+                                      for predict_label_id in predict_label_ids]
                 debug_file.write(json.dumps(prob_np.tolist()))
                 debug_file.write("\n")
             else:
@@ -278,9 +281,9 @@ class ClassificationEvaluator(object):
                 standard_label_name = standard_label_names[line_count]
             else:
                 standard_label_name = [id_to_label_maps[0][standard_label_ids[line_count][i]] \
-                    for i in range(len(standard_label_ids[line_count]))]
-            if (not self. _judge_label_in(predict_label_name, label_to_id_maps)) or \
-                (not self._judge_label_in(standard_label_name, label_to_id_maps)):
+                                       for i in range(len(standard_label_ids[line_count]))]
+            if (not self._judge_label_in(predict_label_name, label_to_id_maps)) or \
+                    (not self._judge_label_in(standard_label_name, label_to_id_maps)):
                 line_count += 1
                 continue
             for std_name in standard_label_name:
@@ -306,12 +309,12 @@ class ClassificationEvaluator(object):
                     for i in range(0, len(std_label)):
                         if i + 1 not in standard_label_map:
                             standard_label_map[i + 1] = set()
-                        standard_label_map[i + 1].add(sep.join(std_label[:i+1]))
+                        standard_label_map[i + 1].add(sep.join(std_label[:i + 1]))
                 for pred_label in predict_hierarchical_labels:
                     for i in range(0, len(pred_label)):
                         if i + 1 not in predict_label_map:
                             predict_label_map[i + 1] = set()
-                        predict_label_map[i + 1].add(sep.join(pred_label[:i+1]))
+                        predict_label_map[i + 1].add(sep.join(pred_label[:i + 1]))
                 for level, std_label_set in standard_label_map.items():
                     for std_label in std_label_set:
                         standard_category_count_list[level][std_label] += 1
@@ -351,12 +354,12 @@ class ClassificationEvaluator(object):
             recall_list.append(recall_dict)
             fscore_list.append(fscore_dict)
 
-        self.confusion_matrix_list, self.precision_list, self.recall_list,\
-            self.fscore_list, self.right_list, self.predict_list,\
-            self.standard_list = (
-                confusion_matrix_list, precision_list, recall_list, fscore_list,
-                right_category_count_list, predict_category_count_list,
-                standard_category_count_list)
+        self.confusion_matrix_list, self.precision_list, self.recall_list, \
+        self.fscore_list, self.right_list, self.predict_list, \
+        self.standard_list = (
+            confusion_matrix_list, precision_list, recall_list, fscore_list,
+            right_category_count_list, predict_category_count_list,
+            standard_category_count_list)
         return (confusion_matrix_list, precision_list, recall_list, fscore_list,
                 right_category_count_list, predict_category_count_list,
                 standard_category_count_list)
@@ -379,7 +382,7 @@ class ClassificationEvaluator(object):
                 for category_second in sorted(confusion_matrix.keys()):
                     cm_file.write(
                         str(confusion_matrix[category_fist][
-                            category_second]) + "\t")
+                                category_second]) + "\t")
                 cm_file.write("\n")
 
     def save_prf(self, file_name, precision_category, recall_category,

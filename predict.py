@@ -10,36 +10,34 @@ Unless required by applicable law or agreed to in writing, software distributed 
 is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the License for thespecific language governing permissions and limitations under
 the License.
-""" 
+"""
 
 import codecs
-import math
-import numpy as np
-import os
-import sys
 import json
+import math
+import sys
 
+import numpy as np
 import torch
-from torch.utils.data import DataLoader
 
 from config import Config
 from dataset.classification_dataset import ClassificationDataset
 from dataset.collator import ClassificationCollator
 from dataset.collator import ClassificationType
 from dataset.collator import FastTextCollator
+from model.classification.attentive_convolution import AttentiveConvNet
+from model.classification.dpcnn import DPCNN
 from model.classification.drnn import DRNN
 from model.classification.fasttext import FastText
-from model.classification.textcnn import TextCNN
-from model.classification.textvdcnn import TextVDCNN
-from model.classification.textrnn import TextRNN
-from model.classification.textrcnn import TextRCNN
-from model.classification.transformer import Transformer
-from model.classification.dpcnn import DPCNN
-from model.classification.attentive_convolution import AttentiveConvNet
 from model.classification.region_embedding import RegionEmbedding
-from model.model_util import get_optimizer, get_hierar_relations
+from model.classification.textcnn import TextCNN
+from model.classification.textrcnn import TextRCNN
+from model.classification.textrnn import TextRNN
+from model.classification.textvdcnn import TextVDCNN
+from model.classification.transformer import Transformer
 
-ClassificationDataset, ClassificationCollator, FastTextCollator,FastText, TextCNN, TextRNN, TextRCNN, DRNN, TextVDCNN, Transformer, DPCNN, AttentiveConvNet, RegionEmbedding
+ClassificationDataset, ClassificationCollator, FastTextCollator, FastText, TextCNN, TextRNN, TextRCNN, DRNN, TextVDCNN, Transformer, DPCNN, AttentiveConvNet, RegionEmbedding
+
 
 class Predictor(object):
     def __init__(self, config):
@@ -48,13 +46,13 @@ class Predictor(object):
         self.use_cuda = config.device.startswith("cuda")
         self.dataset_name = "ClassificationDataset"
         self.collate_name = "FastTextCollator" if self.model_name == "FastText" \
-                else "ClassificationCollator"
+            else "ClassificationCollator"
         self.dataset = globals()[self.dataset_name](config, [], mode="infer")
         self.collate_fn = globals()[self.collate_name](config, len(self.dataset.label_map))
         self.model = Predictor._get_classification_model(self.model_name, self.dataset, config)
         Predictor._load_checkpoint(config.eval.model_dir, self.model, self.use_cuda)
         self.model.eval()
-        
+
     @staticmethod
     def _get_classification_model(model_name, dataset, conf):
         model = globals()[model_name](dataset, conf)
@@ -68,7 +66,7 @@ class Predictor(object):
         else:
             checkpoint = torch.load(file_name, map_location=lambda storage, loc: storage)
         model.load_state_dict(checkpoint["state_dict"])
-    
+
     def predict(self, texts):
         """
         input texts should be json objects
@@ -84,6 +82,7 @@ class Predictor(object):
             probs = probs.cpu().tolist()
             return np.array(probs)
 
+
 if __name__ == "__main__":
     config = Config(config_file=sys.argv[1])
     predictor = Predictor(config)
@@ -93,14 +92,14 @@ if __name__ == "__main__":
     is_multi = config.task_info.label_type == ClassificationType.MULTI_LABEL
     for line in codecs.open(sys.argv[2], "r", predictor.dataset.CHARSET):
         input_texts.append(line.strip("\n"))
-    epoches = math.ceil(len(input_texts)/batch_size)
+    epoches = math.ceil(len(input_texts) / batch_size)
     for i in range(epoches):
-        batch_texts = input_texts[i*batch_size:(i+1)*batch_size]
+        batch_texts = input_texts[i * batch_size:(i + 1) * batch_size]
         predict_prob = predictor.predict(batch_texts)
         for j in predict_prob:
             predict_probs.append(j)
     with codecs.open("predict.txt", "w", predictor.dataset.CHARSET) as of:
-        for predict_prob in predict_probs:
+        for ex_idx, predict_prob in enumerate(predict_probs):
             if not is_multi:
                 predict_label_ids = [predict_prob.argmax()]
             else:
@@ -109,6 +108,9 @@ if __name__ == "__main__":
                 for j in range(0, config.eval.top_k):
                     if predict_prob[predict_label_idx[j]] > config.eval.threshold:
                         predict_label_ids.append(predict_label_idx[j])
+                    else:
+                        break
             predict_label_name = [predictor.dataset.id_to_label_map[predict_label_id] \
-                    for predict_label_id in predict_label_ids]
-            of.write(";".join(predict_label_name) + "\n") 
+                                  for predict_label_id in predict_label_ids]
+            of.write(";".join(predict_label_name) + "\n")
+            print("Example {}, predicted labels are {}".format(ex_idx, predict_label_name))

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding:utf-8
+# coding:utf-8
 """
 Tencent is pleased to support the open source community by making NeuralClassifier available.
 Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
@@ -11,7 +11,6 @@ is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND
 or implied. See the License for thespecific language governing permissions and limitations under
 the License.
 """
-
 
 from dataset.dataset import DatasetBase
 from dataset.dataset import InsertVocabMode
@@ -161,9 +160,9 @@ class ClassificationDataset(DatasetBase):
                               self.config.feature.max_char_len,
                               self.config.feature.max_char_len_per_token)
         return {self.DOC_LABEL: self._label_to_id(doc_labels, self.label_map) if self.model_mode != ModeType.PREDICT else [0],
-                self.DOC_TOKEN: token_ids, self.DOC_CHAR: char_ids,
+                self.DOC_TOKEN: token_ids,
+                self.DOC_CHAR: char_ids,
                 self.DOC_CHAR_IN_TOKEN: char_in_token_ids,
                 self.DOC_TOKEN_NGRAM: token_ngram_ids,
-                self.DOC_KEYWORD:
-                    self._vocab_to_id(doc_keywords, self.keyword_map),
+                self.DOC_KEYWORD: self._vocab_to_id(doc_keywords, self.keyword_map),
                 self.DOC_TOPIC: self._vocab_to_id(doc_topics, self.topic_map)}

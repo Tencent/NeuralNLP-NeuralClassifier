@@ -13,7 +13,6 @@ the License.
 """
 
 import sys
-import time
 
 import torch
 from torch.utils.data import DataLoader
@@ -26,18 +25,17 @@ from dataset.collator import ClassificationType
 from dataset.collator import FastTextCollator
 from evaluate.classification_evaluate import \
     ClassificationEvaluator as cEvaluator
+from model.classification.attentive_convolution import AttentiveConvNet
+from model.classification.dpcnn import DPCNN
 from model.classification.drnn import DRNN
 from model.classification.fasttext import FastText
-from model.classification.textcnn import TextCNN
-from model.classification.textvdcnn import TextVDCNN
-from model.classification.textrnn import TextRNN
-from model.classification.textrcnn import TextRCNN
-from model.classification.transformer import Transformer
-from model.classification.dpcnn import DPCNN
-from model.classification.attentive_convolution import AttentiveConvNet
 from model.classification.region_embedding import RegionEmbedding
-from model.model_util import get_optimizer, get_hierar_relations
-from util import ModeType
+from model.classification.textcnn import TextCNN
+from model.classification.textrcnn import TextRCNN
+from model.classification.textrnn import TextRNN
+from model.classification.textvdcnn import TextVDCNN
+from model.classification.transformer import Transformer
+from model.model_util import get_optimizer
 
 ClassificationDataset, ClassificationCollator, FastTextCollator, cEvaluator,
 FastText, TextCNN, TextRNN, TextRCNN, DRNN, TextVDCNN, Transformer, DPCNN,

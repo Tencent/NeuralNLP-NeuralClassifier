@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding:utf-8
+# coding:utf-8
 """
 Tencent is pleased to support the open source community by making NeuralClassifier available.
 Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
@@ -24,24 +24,23 @@ import util
 from config import Config
 from dataset.classification_dataset import ClassificationDataset
 from dataset.collator import ClassificationCollator
-from dataset.collator import FastTextCollator
 from dataset.collator import ClassificationType
+from dataset.collator import FastTextCollator
 from evaluate.classification_evaluate import \
     ClassificationEvaluator as cEvaluator
+from model.classification.attentive_convolution import AttentiveConvNet
+from model.classification.dpcnn import DPCNN
 from model.classification.drnn import DRNN
 from model.classification.fasttext import FastText
-from model.classification.textcnn import TextCNN
-from model.classification.textvdcnn import TextVDCNN
-from model.classification.textrnn import TextRNN
-from model.classification.textrcnn import TextRCNN
-from model.classification.transformer import Transformer
-from model.classification.dpcnn import DPCNN
-from model.classification.attentive_convolution import AttentiveConvNet
 from model.classification.region_embedding import RegionEmbedding
+from model.classification.textcnn import TextCNN
+from model.classification.textrcnn import TextRCNN
+from model.classification.textrnn import TextRNN
+from model.classification.textvdcnn import TextVDCNN
+from model.classification.transformer import Transformer
 from model.loss import ClassificationLoss
 from model.model_util import get_optimizer, get_hierar_relations
 from util import ModeType
-
 
 ClassificationDataset, ClassificationCollator, FastTextCollator, ClassificationLoss, cEvaluator
 FastText, TextCNN, TextRNN, TextRCNN, DRNN, TextVDCNN, Transformer, DPCNN, AttentiveConvNet, RegionEmbedding
@@ -92,7 +91,7 @@ class ClassificationTrainer(object):
         self.loss_fn = loss_fn
         if self.conf.task_info.hierarchical:
             self.hierar_relations = get_hierar_relations(
-                    self.conf.task_info.hierar_taxonomy, label_map)
+                self.conf.task_info.hierar_taxonomy, label_map)
 
     def train(self, data_loader, model, optimizer, stage, epoch):
         model.update_lr(optimizer, epoch)
@@ -165,7 +164,7 @@ class ClassificationTrainer(object):
                     fscore_list[0][cEvaluator.MACRO_AVERAGE],
                     right_list[0][cEvaluator.MICRO_AVERAGE],
                     predict_list[0][cEvaluator.MICRO_AVERAGE],
-                        standard_list[0][cEvaluator.MICRO_AVERAGE], total_loss))
+                    standard_list[0][cEvaluator.MICRO_AVERAGE], total_loss))
             return fscore_list[0][cEvaluator.MICRO_AVERAGE]
 
 
@@ -240,6 +239,6 @@ def train(conf):
 if __name__ == '__main__':
     config = Config(config_file=sys.argv[1])
     os.environ['CUDA_VISIBLE_DEVICES'] = str(config.train.visible_device_list)
-    torch.manual_seed(2019)
-    torch.cuda.manual_seed(2019)
+    use_cudnn = len(str(config.train.visible_device_list).strip()) > 0
+    util.pytorch_seed(use_cudnn, 2019)
     train(config)

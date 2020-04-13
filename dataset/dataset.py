@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding:utf-8
+# coding:utf-8
 """
 Tencent is pleased to support the open source community by making NeuralClassifier available.
 Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
@@ -15,7 +15,7 @@ the License.
 import json
 import os
 
-import torch
+from torch.utils.data import Dataset
 
 from util import Logger
 from util import ModeType
@@ -37,12 +37,13 @@ class InsertVocabMode(Type):
     LABEL = 'label'
     OTHER = 'other'
 
+    @classmethod
     def str(self):
         return ",".join(
             [self.ALL, self.LABEL, self.OTHER])
 
 
-class DatasetBase(torch.utils.data.dataset.Dataset):
+class DatasetBase(Dataset):
     """Base dataset class
     """
     CHARSET = "utf-8"

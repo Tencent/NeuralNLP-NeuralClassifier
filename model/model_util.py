@@ -13,10 +13,12 @@ the License.
 """
 
 import codecs as cs
+
 import torch
 
-from util import Type
 from model.optimizer import BertAdam
+from util import Type
+
 
 class ActivationType(Type):
     """Standard names for activation
@@ -44,6 +46,7 @@ class InitType(Type):
     KAIMING_NORMAL = 'kaiming_normal'
     ORTHOGONAL = 'orthogonal'
 
+    @classmethod
     def str(self):
         return ",".join(
             [self.UNIFORM, self.NORMAL, self.XAVIER_UNIFORM, self.XAVIER_NORMAL,
@@ -116,6 +119,7 @@ class OptimizerType(Type):
     ADADELTA = "Adadelta"
     BERT_ADAM = "BERTAdam"
 
+    @classmethod
     def str(self):
         return ",".join([self.ADAM, self.ADADELTA])
 
@@ -154,6 +158,6 @@ def get_hierar_relations(hierar_taxonomy, label_map):
                 continue
             parent_label_id = label_map[parent_label]
             children_label_ids = [label_map[child_label] \
-                for child_label in children_label if child_label in label_map]
+                                  for child_label in children_label if child_label in label_map]
             hierar_relations[parent_label_id] = children_label_ids
     return hierar_relations

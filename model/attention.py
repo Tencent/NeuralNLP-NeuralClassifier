@@ -17,11 +17,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from model.model_util import init_tensor
-
 
 class ScaledDotProductAttention(nn.Module):
-    ''' Scaled Dot-Product Attention '''
+    """Scaled Dot-Product Attention """
 
     def __init__(self, temperature, attn_dropout=0.1):
         super(ScaledDotProductAttention, self).__init__()
@@ -30,7 +28,6 @@ class ScaledDotProductAttention(nn.Module):
         self.softmax = nn.Softmax(dim=2)
 
     def forward(self, q, k, v, mask=None):
-
         attn = torch.bmm(q, k.transpose(1, 2))
         attn = attn / self.temperature
 
@@ -45,7 +42,7 @@ class ScaledDotProductAttention(nn.Module):
 
 
 class MultiHeadAttention(nn.Module):
-    ''' Multi-Head Attention module '''
+    """Multi-Head Attention module """
 
     def __init__(self, n_head, d_model, d_k, d_v, use_star=False, dropout=0.1):
         super(MultiHeadAttention, self).__init__()
@@ -70,7 +67,6 @@ class MultiHeadAttention(nn.Module):
 
         self.dropout = nn.Dropout(dropout)
 
-
     def forward(self, q, k, v, mask=None):
 
         d_k, d_v, n_head = self.d_k, self.d_v, self.n_head
@@ -85,16 +81,16 @@ class MultiHeadAttention(nn.Module):
         k = self.w_ks(k).view(sz_b, len_k, n_head, d_k)
         v = self.w_vs(v).view(sz_b, len_v, n_head, d_v)
 
-        q = q.permute(2, 0, 1, 3).contiguous().view(-1, len_q, d_k) # (n*b) x lq x dk
-        k = k.permute(2, 0, 1, 3).contiguous().view(-1, len_k, d_k) # (n*b) x lk x dk
-        v = v.permute(2, 0, 1, 3).contiguous().view(-1, len_v, d_v) # (n*b) x lv x dv
+        q = q.permute(2, 0, 1, 3).contiguous().view(-1, len_q, d_k)  # (n*b) x lq x dk
+        k = k.permute(2, 0, 1, 3).contiguous().view(-1, len_k, d_k)  # (n*b) x lk x dk
+        v = v.permute(2, 0, 1, 3).contiguous().view(-1, len_v, d_v)  # (n*b) x lv x dv
 
         if mask is not None:
-            mask = mask.repeat(n_head, 1, 1) # (n*b) x .. x ..
+            mask = mask.repeat(n_head, 1, 1)  # (n*b) x .. x ..
         output, attn = self.attention(q, k, v, mask=mask)
 
         output = output.view(n_head, sz_b, len_q, d_v)
-        output = output.permute(1, 2, 0, 3).contiguous().view(sz_b, len_q, -1) # b x lq x (n*dv)
+        output = output.permute(1, 2, 0, 3).contiguous().view(sz_b, len_q, -1)  # b x lq x (n*dv)
 
         if self.use_star:
             output = self.dropout(F.relu(self.fc(output)))

@@ -12,9 +12,12 @@ or implied. See the License for thespecific language governing permissions and l
 the License.
 """
 
-
 import logging
+import random
 import sys
+
+import numpy as np
+import torch
 
 EPS = 1e-7
 
@@ -64,7 +67,8 @@ class Logger(object):
         logging.basicConfig(filename=config.log.logger_file,
                             level=logging_level,
                             format='%(asctime)s : %(levelname)s  %(message)s',
-                            filemode="a", datefmt='%Y-%m-%d %H:%M:%S')
+                            filemode="a",
+                            datefmt='%Y-%m-%d %H:%M:%S')
 
     @staticmethod
     def debug(msg):
@@ -97,3 +101,17 @@ class Logger(object):
         """
         logging.error(msg)
         sys.stderr.write(msg + "\n")
+
+
+def pytorch_seed(use_cudnn, seed=2019):
+    # Reference: "https://pytorch.org/docs/stable/notes/randomness.html"
+    # Pytorch
+    torch.manual_seed(seed)
+    if use_cudnn:
+        # CuDNN
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+    # numpy
+    np.random.seed(seed)
+    # random
+    random.seed(seed)
