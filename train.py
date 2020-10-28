@@ -38,6 +38,7 @@ from model.classification.transformer import Transformer
 from model.classification.dpcnn import DPCNN
 from model.classification.attentive_convolution import AttentiveConvNet
 from model.classification.region_embedding import RegionEmbedding
+from model.classification.hmcn import HMCN
 from model.loss import ClassificationLoss
 from model.model_util import get_optimizer, get_hierar_relations
 from util import ModeType
@@ -115,9 +116,9 @@ class ClassificationTrainer(object):
         num_batch = data_loader.__len__()
         total_loss = 0.
         for batch in data_loader:
-            logits = model(batch)
-            # hierarchical classification
+            # hierarchical classification using hierarchy penalty loss
             if self.conf.task_info.hierarchical:
+                logits = model(batch)
                 linear_paras = model.linear.weight
                 is_hierar = True
                 used_argvs = (self.conf.task_info.hierar_penalty, linear_paras, self.hierar_relations)
@@ -127,7 +128,18 @@ class ClassificationTrainer(object):
                     is_hierar,
                     is_multi,
                     *used_argvs)
-            else:  # flat classification
+            # hierarchical classification with HMCN
+            elif self.conf.task_info.hierarchical_model:
+                (global_logits, local_logits, logits) = model(batch)
+                loss = self.loss_fn(
+                    global_logits,
+                    batch[ClassificationDataset.DOC_LABEL].to(self.conf.device))
+                loss += self.loss_fn(
+                    local_logits,
+                    batch[ClassificationDataset.DOC_LABEL].to(self.conf.device))
+            # flat classificaiton
+            else:
+                logits = model(batch) 
                 loss = self.loss_fn(
                     logits,
                     batch[ClassificationDataset.DOC_LABEL].to(self.conf.device),

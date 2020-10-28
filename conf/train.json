@@ -2,6 +2,7 @@
   "task_info":{
     "label_type": "multi_label",
     "hierarchical": true,
+    "hierarchical_model": false,
     "hierar_taxonomy": "data/rcv1.taxonomy",
     "hierar_penalty": 0.000001
   },
@@ -22,6 +23,7 @@
     "generate_dict_using_json_files": true,
     "generate_dict_using_all_json_files": true,
     "generate_dict_using_pretrained_embedding": false,
+    "generate_hierarchy_label": true,
     "dict_dir": "dict_rcv1",
     "num_worker": 4
   },
@@ -148,6 +150,10 @@
     "margin_size": 3,
     "type": "advanced",
     "hidden_size": 64
+  },
+  "HMCN": {
+    "hierarchical_depth": [0, 384, 384, 384, 384],
+    "global2local": [0, 16, 192, 512, 64]
   },
   "log": {
     "logger_file": "log_test_rcv1_hierar",
