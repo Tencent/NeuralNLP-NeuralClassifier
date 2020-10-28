@@ -27,7 +27,7 @@ NeuralClassifier is designed for quick implementation of neural models for hiera
 * Region embedding ([Qiao et al., 2018](http://research.baidu.com/Public/uploads/5acc1e230d179.pdf))
 * Transformer encoder ([Vaswani et al., 2017](https://papers.nips.cc/paper/7181-attention-is-all-you-need.pdf))
 * Star-Transformer encoder ([Guo et al., 2019](https://arxiv.org/pdf/1902.09113.pdf))
-
+* HMCN([Wehrmann et al.,2018](http://proceedings.mlr.press/v80/wehrmann18a/wehrmann18a.pdf))
 ## Requirement
 
 * Python 3
