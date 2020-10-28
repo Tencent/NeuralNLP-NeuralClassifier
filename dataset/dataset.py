@@ -45,6 +45,7 @@ class InsertVocabMode(Type):
 class DatasetBase(torch.utils.data.dataset.Dataset):
     """Base dataset class
     """
+    CLASSIFICATION_LABEL_SEPARATOR = "--"
     CHARSET = "utf-8"
 
     VOCAB_PADDING = 0  # Embedding is all zero and not learnable
@@ -67,6 +68,7 @@ class DatasetBase(torch.utils.data.dataset.Dataset):
         self.sample_index = []
         self.sample_size = 0
         self.model_mode = mode
+        self.hierarchy_classes = []
 
         self.files = json_files
         for i, json_file in enumerate(json_files):
@@ -113,6 +115,8 @@ class DatasetBase(torch.utils.data.dataset.Dataset):
             self._print_dict_info()
 
             self._shrink_dict()
+            if self.config.data.generate_hierarchy_label:
+                self._generate_hierarchy_label()
             self.logger.info("Shrink dict over.")
             self._print_dict_info(True)
             self._save_dict()
@@ -182,12 +186,28 @@ class DatasetBase(torch.utils.data.dataset.Dataset):
                     id_to_vocab_dict_map[0] = self.VOCAB_PADDING
                     id_to_vocab_dict_map[1] = self.VOCAB_UNKNOWN
                     id_to_vocab_dict_map[2] = self.VOCAB_PADDING_LEARNABLE
-
-                for line in open(self.dict_files[dict_idx], "r"):
-                    vocab = line.strip("\n").split("\t")
-                    dict_idx = len(dict_map)
-                    dict_map[vocab[0]] = dict_idx
-                    id_to_vocab_dict_map[dict_idx] = vocab[0]
+                
+                    for line in open(self.dict_files[dict_idx], "r"):
+                        vocab = line.strip("\n").split("\t")
+                        dict_idx = len(dict_map)
+                        dict_map[vocab[0]] = dict_idx
+                        id_to_vocab_dict_map[dict_idx] = vocab[0]
+                else:
+                    hierarchy_dict = dict()
+                    for line in open(self.dict_files[dict_idx], "r"):
+                        vocab = line.strip("\n").split("\t")
+                        dict_idx = len(dict_map)
+                        dict_map[vocab[0]] = dict_idx
+                        id_to_vocab_dict_map[dict_idx] = vocab[0]
+                    
+                        k_level = len(vocab[0].split(self.CLASSIFICATION_LABEL_SEPARATOR))
+                        if k_level not in hierarchy_dict:
+                            hierarchy_dict[k_level] = [vocab[0]]
+                        else:
+                            hierarchy_dict[k_level].append(vocab[0])
+                    sorted_hierarchy_dict = sorted(hierarchy_dict.items(), key=lambda r: r[0])
+                    for _, level_dict in sorted_hierarchy_dict:
+                        self.hierarchy_classes.append(len(level_dict))
 
     def _load_pretrained_dict(self, dict_name=None,
                               pretrained_file=None, min_count=0):
@@ -231,7 +251,26 @@ class DatasetBase(torch.utils.data.dataset.Dataset):
             self.count_list[dict_idx] = \
                 [(k, v) for k, v in self.count_list[dict_idx] if
                  v >= self.min_count[dict_idx]][0:self.max_dict_size[dict_idx]]
-
+    
+    def _generate_hierarchy_label(self):
+        """Generate hierarchy label, used in HMCN
+        """
+        label_dict_idx = self.dict_names.index(self.DOC_LABEL)
+        label_dict = self.count_list[label_dict_idx]
+        hierarchy_dict = dict()
+        for k, v in label_dict:
+            k_level = len(k.split(self.CLASSIFICATION_LABEL_SEPARATOR))
+            if k_level not in hierarchy_dict:
+                hierarchy_dict[k_level] = [(k, v)]
+            else:
+                hierarchy_dict[k_level].append((k, v))
+        sorted_hierarchy_dict = sorted(hierarchy_dict.items(), key=lambda r: r[0])
+        self.count_list[label_dict_idx].clear()
+        for _, level_dict in sorted_hierarchy_dict:
+            self.hierarchy_classes.append(len(level_dict))
+            for label in level_dict:
+                self.count_list[label_dict_idx].append(label)
+    
     def _clear_dict(self):
         """Clear all dict
         """
