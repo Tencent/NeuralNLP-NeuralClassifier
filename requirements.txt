@@ -1,3 +1,2 @@
-torch_nightly>=1.0.0.dev20190325
 numpy>=1.16.2
 torch>=1.0.1.post2
