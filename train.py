@@ -129,14 +129,18 @@ class ClassificationTrainer(object):
                     is_multi,
                     *used_argvs)
             # hierarchical classification with HMCN
-            elif self.conf.task_info.hierarchical_model:
+            elif self.conf.model_name == "HMCN":
                 (global_logits, local_logits, logits) = model(batch)
                 loss = self.loss_fn(
                     global_logits,
-                    batch[ClassificationDataset.DOC_LABEL].to(self.conf.device))
+                    batch[ClassificationDataset.DOC_LABEL].to(self.conf.device),
+                    False,
+                    is_multi)
                 loss += self.loss_fn(
                     local_logits,
-                    batch[ClassificationDataset.DOC_LABEL].to(self.conf.device))
+                    batch[ClassificationDataset.DOC_LABEL].to(self.conf.device),
+                    False,
+                    is_multi)
             # flat classificaiton
             else:
                 logits = model(batch) 
