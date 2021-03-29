@@ -6,7 +6,7 @@
     "hierar_penalty": 1e-5
   },
   "device": "cuda",
-  "model_name": "TextRNN",
+  "model_name": "HMCN",
   "checkpoint_dir": "checkpoint_dir_rcv1",
   "model_dir": "trained_model_rcv1",
   "data": {

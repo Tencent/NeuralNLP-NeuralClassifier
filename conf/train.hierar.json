@@ -3,7 +3,7 @@
     "label_type": "multi_label",
     "hierarchical": true,
     "hierar_taxonomy": "data/rcv1.taxonomy",
-    "hierar_penalty": 0.000000
+    "hierar_penalty": 0.000001
   },
   "device": "cuda",
   "model_name": "TextRNN",
