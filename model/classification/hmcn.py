@@ -29,7 +29,6 @@ class HMCN(Classifier):
         super(HMCN, self).__init__(dataset, config)
         self.hierarchical_depth = config.HMCN.hierarchical_depth
         self.hierarchical_class = dataset.hierarchy_classes
-        print("hierarchy_classes: {}".format(self.hierarchical_class))
         self.global2local = config.HMCN.global2local
         self.rnn = RNN(
             config.embedding.dimension, config.TextRNN.hidden_dimension, 
@@ -111,4 +110,4 @@ class HMCN(Classifier):
 
         global_layer_output = self.linear(global_layer_activation)
         local_layer_output = torch.cat(local_layer_outputs, 1)
-        return (global_layer_output, local_layer_output, 0.5 * global_layer_output + 0.5 * local_layer_output)   
+        return global_layer_output, local_layer_output, 0.5 * global_layer_output + 0.5 * local_layer_output   

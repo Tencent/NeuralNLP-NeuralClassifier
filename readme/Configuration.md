@@ -154,3 +154,7 @@ see TextCNN and TextRNN
 * **n\_layers**: number of layers.
 * **dropout**
 * **use\_star**: whether use Star-Transformer, see [Star-Transformer](https://arxiv.org/pdf/1902.09113v2.pdf "Star-Transformer") 
+
+### HMCN 
+* **hierarchical_depth**: hierarchical depth of each layer
+* **global2local**: list of dimensions from global to local,see [HMCN](http://proceedings.mlr.press/v80/wehrmann18a/wehrmann18a.pdf)
