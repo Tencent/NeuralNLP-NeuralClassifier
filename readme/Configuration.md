@@ -157,4 +157,4 @@ see TextCNN and TextRNN
 
 ### HMCN 
 * **hierarchical_depth**: hierarchical depth of each layer
-* **global2local**: list of dimensions from global to local
+* **global2local**: list of dimensions from global to local,see [HMCN](http://proceedings.mlr.press/v80/wehrmann18a/wehrmann18a.pdf)
