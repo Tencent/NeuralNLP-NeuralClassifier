@@ -29,7 +29,6 @@ class HMCN(Classifier):
         super(HMCN, self).__init__(dataset, config)
         self.hierarchical_depth = config.HMCN.hierarchical_depth
         self.hierarchical_class = dataset.hierarchy_classes
-        print(self.hierarchical_class)
         self.global2local = config.HMCN.global2local
         self.rnn = RNN(
             config.embedding.dimension, config.TextRNN.hidden_dimension, 

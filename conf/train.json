@@ -2,7 +2,6 @@
   "task_info":{
     "label_type": "multi_label",
     "hierarchical": false,
-    "hierarchical_model": false,
     "hierar_taxonomy": "data/rcv1.taxonomy",
     "hierar_penalty": 0.000001
   },
