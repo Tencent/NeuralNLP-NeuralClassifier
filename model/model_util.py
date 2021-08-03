@@ -146,14 +146,18 @@ def get_hierar_relations(hierar_taxonomy, label_map):
         hierar_taxonomy: parent_label \t child_label_0 \t child_label_1 \n
     """
     hierar_relations = {}
+    new_label_map = {}
+    for label_path, idx in label_map.items():
+        for label in label_path.split('--'):
+            new_label_map[label] = new_label_map.get(label, idx)
     with cs.open(hierar_taxonomy, "r", "utf8") as f:
         for line in f:
             line_split = line.strip("\n").split("\t")
             parent_label, children_label = line_split[0], line_split[1:]
-            if parent_label not in label_map:
+            if parent_label not in new_label_map:
                 continue
-            parent_label_id = label_map[parent_label]
-            children_label_ids = [label_map[child_label] \
-                for child_label in children_label if child_label in label_map]
+            parent_label_id = new_label_map[parent_label]
+            children_label_ids = [new_label_map[child_label] \
+                for child_label in children_label if child_label in new_label_map]
             hierar_relations[parent_label_id] = children_label_ids
     return hierar_relations
