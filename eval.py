@@ -36,6 +36,7 @@ from model.classification.transformer import Transformer
 from model.classification.dpcnn import DPCNN
 from model.classification.attentive_convolution import AttentiveConvNet
 from model.classification.region_embedding import RegionEmbedding
+from model.classification.hmcn import HMCN
 from model.model_util import get_optimizer, get_hierar_relations
 from util import ModeType
 
