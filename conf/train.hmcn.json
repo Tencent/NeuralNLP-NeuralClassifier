@@ -1,7 +1,7 @@
 {
   "task_info": {
     "label_type": "multi_label",
-    "hierarchical": false,
+    "hierarchical": true,
     "hierar_taxonomy": "data/rcv1.taxonomy",
     "hierar_penalty": 1e-5
   },
@@ -11,10 +11,10 @@
   "model_dir": "trained_model_rcv1",
   "data": {
     "train_json_files": [
-      "data/rcv1_merged.hierar.json"
+      "data/rcv1_train.hierar.json"
     ],
     "validate_json_files": [
-      "data/rcv1_test.hierar.json"
+      "data/rcv1_dev.hierar.json"
     ],
     "test_json_files": [
       "data/rcv1_test.hierar.json"
@@ -104,13 +104,13 @@
     "cell_hidden_dropout": 0.1
   },
   "eval": {
-    "text_file": "data/rcv1_test.json",
+    "text_file": "data/rcv1_test.hierar.json",
     "threshold": 0.5,
     "dir": "eval_dir",
     "batch_size": 1024,
     "is_flat": true,
     "top_k": 100,
-    "model_dir": "checkpoint_dir_rcv1/TextCNN_best"
+    "model_dir": "checkpoint_dir_rcv1/HMCN_best"
   },
   "TextVDCNN": {
     "vdcnn_depth": 9,
