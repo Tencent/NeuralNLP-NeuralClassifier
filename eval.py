@@ -84,7 +84,10 @@ def eval(conf):
     standard_labels = []
     evaluator = cEvaluator(conf.eval.dir)
     for batch in test_data_loader:
-        logits = model(batch)
+        if model_name == "HMCN":
+            (global_logits, local_logits, logits) = model(batch)
+        else:
+            logits = model(batch)
         if not is_multi:
             result = torch.nn.functional.softmax(logits, dim=1).cpu().tolist()
         else:
