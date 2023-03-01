@@ -80,7 +80,7 @@ class RNN(torch.nn.Module):
             else:
                 sorted_inputs = inputs[:, indices]
             packed_inputs = torch.nn.utils.rnn.pack_padded_sequence(
-                sorted_inputs, sorted_seq_lengths, batch_first=self.batch_first)
+                sorted_inputs, sorted_seq_lengths.cpu(), batch_first=self.batch_first)
             outputs, state = self.rnn(packed_inputs, init_state)
         else:
             outputs, state = self.rnn(inputs, init_state)
