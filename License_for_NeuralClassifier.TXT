@@ -1,6 +1,6 @@
 Tencent is pleased to support the open source community by making NeuralClassifier available.   
 
-Copyright (C) 2019 THL A29 Limited, a Tencent company.  All rights reserved.
+Copyright (C) 2019 Tencent.  All rights reserved.
 
 NeuralClassifier is licensed under the MIT license, except for the third-party components listed below which may be subject to thier corresponding license terms.  
 
@@ -9,7 +9,7 @@ A copy of the MIT License is included in this file.
 
 Other dependencies and licenses:
 
-Open Source Software Licensed under the Apache License Version 2.0: The below software in this distribution may have been modified by Tencent (¡°Tencent Modifications¡±). All Tencent Modifications are Copyright (C) 2019 THL A29 Limited.
+Open Source Software Licensed under the Apache License Version 2.0: The below software in this distribution may have been modified by Tencent (¡°Tencent Modifications¡±). All Tencent Modifications are Copyright (C) 2019 Tencent.
 --------------------------------------------------------------------
 1. cnn-text-classification-pytorch
 Copyright (c) Shawn1993
@@ -92,7 +92,7 @@ See the License for the specific language governing permissions and limitations 
 
 
 
-Open Source Software Licensed under the MIT License: The below software in this distribution may have been modified by Tencent. All Tencent Modifications are Copyright (C) 2019 THL A29 Limited.
+Open Source Software Licensed under the MIT License: The below software in this distribution may have been modified by Tencent. All Tencent Modifications are Copyright (C) 2019 Tencent.
 --------------------------------------------------------------------
 1. attention-is-all-you-need-pytorch
 Copyright (c) 2017 Victor Huang
