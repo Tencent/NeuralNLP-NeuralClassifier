@@ -100,7 +100,7 @@ def eval(conf):
             predict_probs, standard_label_ids=standard_labels, label_map=empty_dataset.label_map,
             threshold=conf.eval.threshold, top_k=conf.eval.top_k,
             is_flat=conf.eval.is_flat, is_multi=is_multi)
-    logger.warn(
+    logger.warning(
         "Performance is precision: %f, "
         "recall: %f, fscore: %f, right: %d, predict: %d, standard: %d." % (
             precision_list[0][cEvaluator.MICRO_AVERAGE],
